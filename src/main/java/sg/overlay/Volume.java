@@ -23,7 +23,8 @@ public class Volume extends BaseVolume {
 
     public Optional<Entry> getEntry(String key) {
         return super.getEntry(key)
-                .or(() -> baseVolume != null ? baseVolume.getEntry(key) : Optional.empty());
+                .or(() -> baseVolume != null ? baseVolume.getEntry(key) : Optional.empty())
+                .filter(e -> !e.metadata().isDeleted());
     }
 
     public Volume withBase(Volume volume) {

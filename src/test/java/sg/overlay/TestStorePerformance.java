@@ -3,14 +3,13 @@ package sg.overlay;
 import org.apache.commons.lang.time.StopWatch;
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class PerfTestStore {
-    private static Random rnd = new Random();
+public class TestStorePerformance {
+    private static final Random rnd = new Random();
 
     @Test
     void test_big_data() {
@@ -63,9 +62,7 @@ public class PerfTestStore {
         int reads = 10000000;
         getRandomFileStream(entries.length, reads)
                 .parallel()
-                .forEach(file -> {
-                    store.getEntry(file).orElse(null);
-                });
+                .forEach(store::getEntry);
         watch.stop();
         System.out.println("DEBUG: Querying " + reads + " times: " + watch.getTime() + " ms");
         System.out.println("DEBUG: TPS " + (reads / (watch.getTime() / 1000.0)) + " read/s");
@@ -87,14 +84,13 @@ public class PerfTestStore {
     private static Stream<Integer> getIntegerStream(int bucket, int size) {
         return IntStream.range(0, size)
                 .boxed()
-                .map(i -> rnd.nextInt(1, bucket));
+                .map(_ -> rnd.nextInt(1, bucket));
     }
 
     private static Entry[] getEntries(int num) {
         String content = rnd.ints(100).boxed().map(Object::toString).collect(Collectors.joining());
-        Entry[] entries = IntStream.range(1, num+1)
-                .mapToObj(i -> new Entry("file_" + i, content, new Metadata()))
+        return IntStream.range(1, num+1)
+                .mapToObj(i -> new Entry("file_" + i, content, Metadata.DEFAULT))
                 .toArray(Entry[]::new);
-        return entries;
     }
 }
