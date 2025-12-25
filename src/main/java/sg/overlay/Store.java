@@ -9,8 +9,13 @@ public class Store {
         this.lookup = lookup;
     }
 
-    public static Store fromVolume(Volume volume) { return new Store(volume);}
-    public static Store empty() {return new Store(Volume.emptyVolume());}
+    public static Store fromVolume(Volume volume) {
+        return new Store(volume);
+    }
+
+    public static Store empty() {
+        return new Store(Volume.emptyVolume());
+    }
 
     public void addOverlay(Volume newLookup) {
         lookup = newLookup.withBase(lookup);
@@ -24,5 +29,9 @@ public class Store {
 
     public Optional<Entry> getEntry(String key) {
         return lookup.getEntry(key);
+    }
+
+    public Collection<Entry> getEntriesByPrefix(String prefix) {
+        return lookup.getEntriesByPrefix(prefix);
     }
 }

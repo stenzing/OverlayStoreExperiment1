@@ -1,9 +1,7 @@
 package sg.overlay;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BaseVolume {
     private final Map<String, Entry> lookup = new TreeMap<>();
@@ -17,5 +15,13 @@ public class BaseVolume {
 
     protected void addEntry(Entry entry) {
         lookup.put(entry.path(), entry);
+    }
+
+    public Collection<Entry> getEntriesByPrefix(String prefix) {
+        return lookup.entrySet()
+                .stream()
+                .filter(e -> e.getKey().startsWith(prefix))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
     }
 }

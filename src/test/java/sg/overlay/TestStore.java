@@ -3,6 +3,8 @@ package sg.overlay;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 public class TestStore {
 
     @Test
@@ -76,5 +78,24 @@ public class TestStore {
         store2.addOverlay(updatingVolume);
         Assertions.assertTrue(store1.getEntry("sample1").isEmpty());
         Assertions.assertEquals(newEntry, store2.getEntry("sample1").orElseThrow());
+    }
+
+    @Test
+    void testListingByPrefix() {
+        var entry1 = new Entry("prefixa/11", "contnt1", Metadata.DEFAULT);
+        var entry2 = new Entry("prefixa/12", "contnt2", Metadata.DEFAULT);
+        var entry3 = new Entry("prefixa/13", "contnt1", Metadata.DEFAULT);
+        var entry3b = new Entry("prefixa/13", "", Metadata.DELETED);
+        var entry4 = new Entry("prefixa/14", "contnt1", Metadata.DEFAULT);
+        var entry4b = new Entry("prefixa/14", "contnt2", Metadata.DEFAULT);
+        var entry5 = new Entry("prefixb/11", "contnt1", Metadata.DEFAULT);
+        var entry6 = new Entry("prefixb/12", "contnt2", Metadata.DEFAULT);
+        var store = Store.fromVolume(Volume.ofEntries(entry1, entry3, entry4, entry5));
+        store.addOverlay(Volume.ofEntries(entry2, entry3b, entry4b, entry6));
+
+        var result = store.getEntriesByPrefix("prefixa");
+
+        Assertions.assertTrue(result.containsAll(List.of(entry1, entry2, entry4b)));
+        Assertions.assertTrue(result.stream().noneMatch(e -> List.of(entry3, entry4, entry5, entry6).contains(e)));
     }
 }

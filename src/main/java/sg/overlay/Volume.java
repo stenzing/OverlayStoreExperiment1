@@ -1,6 +1,7 @@
 package sg.overlay;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Volume extends BaseVolume {
 
@@ -34,5 +35,17 @@ public class Volume extends BaseVolume {
 
     public Volume getBase() {
         return baseVolume;
+    }
+
+    public Collection<Entry> getEntriesByPrefix(String prefix) {
+        LinkedHashMap<String, Entry> aggr = new LinkedHashMap<>();
+        super.getEntriesByPrefix(prefix).forEach(e -> aggr.put(e.path(), e));
+        if (baseVolume!= null) {
+            baseVolume.getEntriesByPrefix(prefix)
+                    .forEach(e -> aggr.putIfAbsent(e.path(), e));
+        }
+        return aggr.values().stream()
+                .filter(e -> !e.metadata().isDeleted())
+                .collect(Collectors.toList());
     }
 }
