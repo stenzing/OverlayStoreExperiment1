@@ -3,10 +3,16 @@ package sg.overlay;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class BaseVolume {
+public class BaseVolume implements IVolume {
     private final Map<String, Entry> lookup = new TreeMap<>();
 
     BaseVolume() {
+    }
+    public static BaseVolume ofEntries(Entry... entries) {
+        BaseVolume vo = new BaseVolume();
+        Arrays.stream(entries)
+                .forEach(vo::addEntry);
+        return vo;
     }
 
     public Optional<Entry> getEntry(String key) {
