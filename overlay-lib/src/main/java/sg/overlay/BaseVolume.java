@@ -1,10 +1,11 @@
 package sg.overlay;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class BaseVolume implements IVolume {
-    private final Map<String, Entry> lookup = new TreeMap<>();
+    protected final Map<String, Entry> lookup = new ConcurrentHashMap<>();
 
     BaseVolume() {
     }
@@ -19,8 +20,11 @@ public class BaseVolume implements IVolume {
         return Optional.ofNullable(lookup.get(key));
     }
 
-    protected void addEntry(Entry entry) {
+    public void addEntry(Entry entry) {
         lookup.put(entry.path(), entry);
+    }
+    public void deleteEntry(String key) {
+        lookup.remove(key);
     }
 
     public Collection<Entry> getEntriesByPrefix(String prefix) {

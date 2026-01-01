@@ -21,6 +21,21 @@ public class LayerableVolume implements IVolume, HasParent<IVolume> {
     }
 
 
+    @Override
+    public void addEntry(Entry entry) {
+        baseVolume.addEntry(entry);
+    }
+
+    @Override
+    public void deleteEntry(String key) {
+        if (parentVolume!= null) {
+            parentVolume.getEntry(key)
+                    .ifPresentOrElse(_ -> baseVolume.addEntry(new Entry(key, "", Metadata.DELETED)), () -> baseVolume.deleteEntry(key));
+        } else {
+            baseVolume.deleteEntry(key);
+        }
+    }
+
     public Optional<Entry> getEntry(String key) {
         return baseVolume.getEntry(key)
                 .or(() -> parentVolume != null ? parentVolume.getEntry(key) : Optional.empty())

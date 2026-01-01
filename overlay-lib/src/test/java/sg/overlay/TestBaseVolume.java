@@ -30,6 +30,14 @@ public class TestBaseVolume {
     }
 
     @Test
+    void testRemovingItem() {
+        var target = BaseVolume.ofEntries(ENTRY);
+        Assertions.assertTrue(target.getEntry(DUMMY_KEY).isPresent());
+        target.deleteEntry(DUMMY_KEY);
+        Assertions.assertFalse(target.getEntry(DUMMY_KEY).isPresent());
+    }
+
+    @Test
     void testListingByPrefix() {
         var entry1 = new Entry("prefixa/11", "contnt1", Metadata.DEFAULT);
         var entry2 = new Entry("prefixa/12", "contnt1", Metadata.DEFAULT);
