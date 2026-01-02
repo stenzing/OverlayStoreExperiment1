@@ -30,23 +30,33 @@ public class KafkaSourceUpdater implements Runnable {
 
     @Override
     public void run() {
-        consumer.subscribe(List.of(volumeName));
         try {
+            log.debug("Receiving messages for {}", volumeName);
+            consumer.subscribe(List.of(volumeName));
+            log.debug("Received partitions: {}", consumer.assignment());
+            consumer.seekToBeginning(consumer.assignment());
             while (true) {
-                var records = consumer.poll(Duration.ofSeconds(3));
+                var records = consumer.poll(Duration.ofSeconds(30));
+                log.info("Received {} records", records.count());
                 for (ConsumerRecord<String, EntryEvent> record : records) {
-                    processRecord(record.value());
+                    if (record.value()!=null) processRecord(record.value());
                 }
+                consumer.commitAsync();
             }
+        } catch (Exception e ) {
+            log.error("Exception in processing", e);
         } finally {
+            log.debug("Consumer closed for {}", volumeName);
             consumer.close();
         }
     }
 
     void processRecord(EntryEvent event) {
         if (event instanceof EntryUpdateEvent update) {
+            log.info("Update event received for {}", update.getKey());
             targetVolume.addEntry(new Entry(update.getKey(), update.getContent(), Metadata.DEFAULT));
         } else if (event instanceof EntryDeleteEvent delete) {
+            log.info("Delete event received for {}", delete.getKey());
             targetVolume.deleteEntry(delete.getKey());
         } else {
             log.error("Event not processed: ({}) {}", event.getKey(), event);

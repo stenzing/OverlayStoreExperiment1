@@ -42,6 +42,9 @@ public class Application {
             addVolume("01", manager, executorService);
             server.onDispose()
                     .block();
+            executorService.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -1,9 +1,7 @@
 package sg.overlay.updater;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.common.message.AlterPartitionResponseDataJsonConverter;
 import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.shaded.com.google.protobuf.DescriptorProtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sg.overlay.updater.model.EntryEvent;
