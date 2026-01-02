@@ -35,6 +35,7 @@ public class KafkaSourceUpdater implements Runnable {
             consumer.subscribe(List.of(volumeName));
             log.debug("Received partitions: {}", consumer.assignment());
             consumer.seekToBeginning(consumer.assignment());
+            //noinspection InfiniteLoopStatement
             while (true) {
                 var records = consumer.poll(Duration.ofSeconds(30));
                 log.info("Received {} records", records.count());

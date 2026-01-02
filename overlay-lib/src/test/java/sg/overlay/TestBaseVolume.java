@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class TestBaseVolume {
 
     public static final String DUMMY_KEY = "sample1";

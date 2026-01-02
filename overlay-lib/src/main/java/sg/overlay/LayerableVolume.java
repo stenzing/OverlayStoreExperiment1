@@ -52,13 +52,13 @@ public class LayerableVolume implements IVolume, HasParent<IVolume> {
     }
 
     public Collection<Entry> getEntriesByPrefix(String prefix) {
-        LinkedHashMap<String, Entry> aggr = new LinkedHashMap<>();
-        baseVolume.getEntriesByPrefix(prefix).forEach(e -> aggr.put(e.path(), e));
+        LinkedHashMap<String, Entry> aggregate = new LinkedHashMap<>();
+        baseVolume.getEntriesByPrefix(prefix).forEach(e -> aggregate.put(e.path(), e));
         if (parentVolume!= null) {
             parentVolume.getEntriesByPrefix(prefix)
-                    .forEach(e -> aggr.putIfAbsent(e.path(), e));
+                    .forEach(e -> aggregate.putIfAbsent(e.path(), e));
         }
-        return aggr.values().stream()
+        return aggregate.values().stream()
                 .filter(e -> !e.metadata().isDeleted())
                 .collect(Collectors.toList());
     }

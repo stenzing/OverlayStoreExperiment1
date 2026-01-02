@@ -7,8 +7,8 @@ import java.util.List;
 
 public class TestVolumeManager {
     public static final String SOME_PATH = "some_path";
-    Entry MOCK_ENTRY_1 = new Entry(SOME_PATH, "some content", Metadata.DEFAULT);
-    Entry MOCK_ENTRY_2 = new Entry("some_path", "", Metadata.DELETED);
+    private final Entry MOCK_ENTRY_1 = new Entry(SOME_PATH, "some content", Metadata.DEFAULT);
+    private final Entry MOCK_ENTRY_2 = new Entry("some_path", "", Metadata.DELETED);
 
     @Test
     void testInit() {

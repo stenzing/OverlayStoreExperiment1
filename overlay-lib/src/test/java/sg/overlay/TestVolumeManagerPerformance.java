@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 public class TestVolumeManagerPerformance {
     private static final Random rnd = new Random();
-    private static Runtime runtime = Runtime.getRuntime();
+    private static final Runtime runtime = Runtime.getRuntime();
 
     public static class Measurement implements AutoCloseable {
         private final String step;
@@ -54,36 +54,36 @@ public class TestVolumeManagerPerformance {
         System.out.println("Memory used by " + entries.length + " entries: " + (usedMemoryAfter - usedMemoryBefore) / (1024 * 1024.0) + " MB");
         var store = new VolumeManager();
 
-        try (Measurement m = new Measurement("Load Volume 1")){
+        try (Measurement _ = new Measurement("Load Volume 1")){
             store.register("base", BaseVolume.ofEntries(entries));
         }
 
         var layerSize = 100000;
-        try (Measurement m = new Measurement("Load Volume 2 ("+layerSize+" entries)")){
+        try (Measurement _ = new Measurement("Load Volume 2 ("+layerSize+" entries)")){
             store.register("01", buildRandomOverlay(entries, layerSize));
         }
         layerSize = 100000;
-        try (Measurement m = new Measurement("Load Volume 3 ("+layerSize+" entries)")){
+        try (Measurement _ = new Measurement("Load Volume 3 ("+layerSize+" entries)")){
             store.register("02", buildRandomOverlay(entries, layerSize));
         }
         layerSize = 10000;
-        try (Measurement m = new Measurement("Load Volume 4 ("+layerSize+" entries)")){
+        try (Measurement _ = new Measurement("Load Volume 4 ("+layerSize+" entries)")){
             store.register("03", buildRandomOverlay(entries, layerSize));
         }
         int reads = 1000;
-        try (Measurement m = new Measurement("Random reads ("+reads+" reads)", reads)){
+        try (Measurement _ = new Measurement("Random reads ("+reads+" reads)", reads)){
             getRandomStringStream(entries.length, reads)
                     .parallel()
                     .forEach(key -> store.ofStructure(List.of("base", "01", "02", "03")).getEntry(key));
         }
         reads = 100000;
-        try (Measurement m = new Measurement("Random reads ("+reads+" reads)", reads)){
+        try (Measurement _ = new Measurement("Random reads ("+reads+" reads)", reads)){
             getRandomStringStream(entries.length, reads)
                     .parallel()
                     .forEach(key -> store.ofStructure(List.of("base", "01", "02", "03")).getEntry(key));
         }
         reads = 10000000;
-        try (Measurement m = new Measurement("Random reads ("+reads+" reads)", reads)){
+        try (Measurement _ = new Measurement("Random reads ("+reads+" reads)", reads)){
             getRandomStringStream(entries.length, reads)
                     .parallel()
                     .forEach(key -> store.ofStructure(List.of("base", "01", "02", "03")).getEntry(key));

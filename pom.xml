@@ -14,7 +14,7 @@
     <modules>
         <module>overlay-lib</module>
         <module>overlay-api</module>
-        <module>overlay-kafka-updateter</module>
+        <module>overlay-kafka-updater</module>
         <module>overlay-backend</module>
     </modules>
     <dependencyManagement>

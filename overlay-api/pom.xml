@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>sg.projects</groupId>
-            <artifactId>overlay-kafka-updateter</artifactId>
+            <artifactId>overlay-kafka-updater</artifactId>
             <version>${parent.version}</version>
         </dependency>
     </dependencies>

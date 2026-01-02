@@ -21,7 +21,7 @@ import sg.overlay.updater.model.EntryEvent;
 import java.util.Properties;
 
 public class KafkaSourceUpdaterTest {
-    private static KafkaContainer kafka = new KafkaContainer("apache/kafka-native:3.8.0");
+    private static final KafkaContainer kafka = new KafkaContainer("apache/kafka-native:3.8.0");
 
     private static KafkaSourceUpdater connector;
     private static KafkaProducer<String, EntryEvent> producer;

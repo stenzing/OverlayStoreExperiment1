@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class TestLayerableVolume {
 
     @Test

@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Gatherers;
 
 public class VolumeManager {
-    private Map<String, IVolume> registry = new HashMap<>();
+    private final Map<String, IVolume> registry = new HashMap<>();
 
     public void register(String id, IVolume newLookup) {
         registry.put(id, newLookup);
