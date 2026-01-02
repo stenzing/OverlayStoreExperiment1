@@ -12,8 +12,8 @@ public class VolumeManager {
 
     public IVolume ofStructure(Collection<String> ids) {
         return ids.stream()
-                .map(id -> registry.get(id))
-                .gather(Gatherers.scan(() -> LayerableVolume.emptyVolume(), (layerableVolume, iVolume) -> (LayerableVolume) LayerableVolume.from(iVolume).withParent(layerableVolume)))
+                .map(registry::get)
+                .gather(Gatherers.scan(LayerableVolume::emptyVolume, (layerableVolume, iVolume) -> (LayerableVolume) LayerableVolume.from(iVolume).withParent(layerableVolume)))
                 .findFirst().orElseThrow();
 
     }

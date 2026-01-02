@@ -23,7 +23,7 @@ class EntryEventDeserializerTest {
         var result = target.deserialize(content, content.getBytes(StandardCharsets.UTF_8));
         assertNotNull(result);
         assertEquals("0001", result.getKey());
-        assertTrue(result instanceof EntryDeleteEvent);
+        assertInstanceOf(EntryDeleteEvent.class, result);
     }
 
     @Test
@@ -34,7 +34,7 @@ class EntryEventDeserializerTest {
         var result = target.deserialize(content, content.getBytes(StandardCharsets.UTF_8));
         assertNotNull(result);
         assertEquals("0001", result.getKey());
-        assertTrue(result instanceof EntryUpdateEvent);
+        assertInstanceOf(EntryUpdateEvent.class, result);
         assertEquals("someData", ((EntryUpdateEvent) result).getContent());
 
     }

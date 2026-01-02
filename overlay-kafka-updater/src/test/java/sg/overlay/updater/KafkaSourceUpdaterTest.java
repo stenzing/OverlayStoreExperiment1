@@ -23,7 +23,6 @@ import java.util.Properties;
 public class KafkaSourceUpdaterTest {
     private static final KafkaContainer kafka = new KafkaContainer("apache/kafka-native:3.8.0");
 
-    private static KafkaSourceUpdater connector;
     private static KafkaProducer<String, EntryEvent> producer;
 
     @Mock
@@ -38,7 +37,7 @@ public class KafkaSourceUpdaterTest {
     void beforeEach() {
         Mockito.reset(targetVolume);
         var props = consumerProperties();
-        connector = new KafkaSourceUpdater("test1", targetVolume, props);
+        KafkaSourceUpdater connector = new KafkaSourceUpdater("test1", targetVolume, props);
         producer = getProducer();
     }
 

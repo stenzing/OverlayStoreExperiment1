@@ -65,7 +65,7 @@ public class Application {
     }
 
     private static void addVolume(String name, VolumeManager manager, ExecutorService executorService, Connection connection) {
-        IVolume volume = null;
+        IVolume volume;
         try {
             volume = DatabaseStateLoader.fromDatabase(connection, name);
         } catch (SQLException e) {
