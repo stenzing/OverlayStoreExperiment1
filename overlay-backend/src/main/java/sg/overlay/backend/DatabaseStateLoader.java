@@ -6,7 +6,6 @@ import sg.overlay.IVolume;
 import sg.overlay.Metadata;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseStateLoader {
@@ -18,12 +17,12 @@ public class DatabaseStateLoader {
         while (rs.next()) {
             if (rs.getBoolean("is_deleted")) {
                 volume.addEntry(new Entry(
-                        rs.getString("key"),
+                        rs.getString("path"),
                         null,
                         Metadata.DELETED));
             } else {
                 volume.addEntry(new Entry(
-                        rs.getString("key"),
+                        rs.getString("path"),
                         rs.getString("content"),
                         Metadata.DEFAULT));
             }

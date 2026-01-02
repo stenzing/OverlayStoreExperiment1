@@ -59,6 +59,8 @@ public class Application {
         var stmt = connection.createStatement();
         stmt.execute("CREATE SCHEMA sample_schema AUTHORIZATION sa");
         stmt.execute("CREATE TABLE entries (path VARCHAR(255) NOT NULL PRIMARY KEY, content BLOB, is_deleted BOOLEAN DEFAULT FALSE, version INT DEFAULT 0, volume_id VARCHAR(50) NOT NULL)");
+        stmt.execute("INSERT INTO entries VALUES ('path01', 'content1', false, 0, '01')");
+        connection.commit();
         return connection;
     }
 

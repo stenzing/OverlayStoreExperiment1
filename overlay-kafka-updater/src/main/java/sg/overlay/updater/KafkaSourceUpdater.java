@@ -38,7 +38,7 @@ public class KafkaSourceUpdater implements Runnable {
             //noinspection InfiniteLoopStatement
             while (true) {
                 var records = consumer.poll(Duration.ofSeconds(30));
-                log.info("Received {} records", records.count());
+                log.debug("Received {} records", records.count());
                 for (ConsumerRecord<String, EntryEvent> record : records) {
                     if (record.value()!=null) processRecord(record.value());
                 }
