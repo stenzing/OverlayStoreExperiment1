@@ -7,14 +7,20 @@ import reactor.core.publisher.Mono;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.server.HttpServer;
 import sg.overlay.*;
+import sg.overlay.api.service.TestDataGenerator;
 import sg.overlay.backend.DatabaseStateLoader;
 import sg.overlay.updater.KafkaSourceFactory;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.stream.IntStream;
 
 public class Application {
 
@@ -22,18 +28,19 @@ public class Application {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 
-    static void main(String[] args) throws SQLException {
+    static void main(String[] args) throws SQLException, IOException {
 
         var connection = getConnection();
+
+        TestDataGenerator.generateData(connection);
         DisposableServer server =
                 HttpServer.create()
                         .host("localhost")
                         .port(8080)
-                        .route(routes -> routes.get("/{path}",
+                        .route(routes -> routes.get("/{volumes}/{path}",
                                 (request, response) -> {
-                                    log.info("Received path: {}", request.path());
                                     var entry = manager
-                                            .ofStructure(List.of("01"))
+                                            .ofStructure(Arrays.stream(request.param("volumes").split("\\.")).toList())
                                             .getEntry(request.param("path"));
                                     if (entry.isPresent()) {
                                         return response.status(HttpResponseStatus.OK)
@@ -46,6 +53,9 @@ public class Application {
 
         try (ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()) {
             addVolume("01", manager, executorService, connection);
+            addVolume("02", manager, executorService, connection);
+            addVolume("03a", manager, executorService, connection);
+            addVolume("03b", manager, executorService, connection);
             server.onDispose()
                     .block();
             executorService.awaitTermination(10, TimeUnit.SECONDS);
@@ -54,15 +64,30 @@ public class Application {
         }
     }
 
-    private static Connection getConnection() throws SQLException {
+    private static Connection getConnection() throws SQLException, IOException {
         var connection = DriverManager.getConnection("jdbc:h2:mem:testcase", "sa", null);
         var stmt = connection.createStatement();
-        stmt.execute("CREATE SCHEMA sample_schema AUTHORIZATION sa");
-        stmt.execute("CREATE TABLE entries (path VARCHAR(255) NOT NULL PRIMARY KEY, content BLOB, is_deleted BOOLEAN DEFAULT FALSE, version INT DEFAULT 0, volume_id VARCHAR(50) NOT NULL)");
-        stmt.execute("INSERT INTO entries VALUES ('path01', 'content1', false, 0, '01')");
+        try (var db_script = Application.class.getClassLoader().getResourceAsStream("schema.sql")) {
+            if (db_script != null) {
+                new BufferedReader(new InputStreamReader(db_script))
+                        .lines()
+                        .forEach(
+                                l -> {
+                                    try {
+                                        if (!l.isBlank()) stmt.execute(l);
+                                    } catch (SQLException e) {
+                                        log.error("DB INIT FAILED, ", e);
+                                    }
+                                }
+                        );
+            } else {
+                throw new IOException("Schema file missing");
+            }
+        }
         connection.commit();
         return connection;
     }
+
 
     private static void addVolume(String name, VolumeManager manager, ExecutorService executorService, Connection connection) {
         IVolume volume;
