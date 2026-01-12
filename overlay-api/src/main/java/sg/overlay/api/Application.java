@@ -3,6 +3,7 @@ package sg.overlay.api;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.server.HttpServer;
@@ -47,7 +48,16 @@ public class Application {
                                                 .sendString(Mono.just(entry.get().content()));
                                     }
                                     return response.sendNotFound();
-                                }))
+                                })
+                                .get("/search/{volumes}/{prefix}",
+                                        (request, response) -> {
+                                            var items = manager
+                                                    .ofStructure(Arrays.stream(request.param("volumes").split("\\.")).toList())
+                                                    .getEntriesByPrefix(request.param("prefix")).stream();
+                                            return response.status(HttpResponseStatus.OK)
+                                                    .sendString(Flux.fromStream(items).map(Entry::content));
+                                        }
+                                        ))
                         .bindNow();
 
 
